@@ -6,7 +6,6 @@ A package to simulate q-learning agents in an economics environment with non-ela
 
 
 * Free software: MIT license
-* Documentation: https://qpricesim.readthedocs.io.
 
 
 Features
