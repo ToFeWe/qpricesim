@@ -16,7 +16,7 @@ Furthermore, the  `replication package <https://github.com/ToFeWe/q-learning-rep
 for the aforementioned paper uses this package.
 
 
-* Free software: MIT license
+Free software: MIT license
 
 
 Installation
