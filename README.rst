@@ -66,7 +66,6 @@ Minimal working examples
 To simulate a single agent you can do the following:
 
 .. code-block:: python
-  :linenos:
 
   from qpricesim.simulations.agents_simulation import train_agents
   
@@ -94,7 +93,6 @@ To simulate a single agent you can do the following:
 For running a one iteration in a small grid simulation:
 
 .. code-block:: python
-  :linenos:
 
   from qpricesim.simulations.mc_simulation_job_array import run_single_simulation
   
