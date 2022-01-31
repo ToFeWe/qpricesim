@@ -21,44 +21,23 @@ for the aforementioned paper uses this package.
 
 Installation
 ------------
+Simply clone this repository and install the package to your local environment.
 
-TODO
+.. code-block:: console
+
+    $ git clone git://github.com/ToFeWe/qpricesim
+
+.. code-block:: console
+
+    $ python setup.py install
 
 
-Parameter specification
------------------------
+Features
+--------
 
-In the simulation certain (hyper-)parameters have to be defined in a dictionary.
-The following keys are necessary:
-
-*  n_agent: Number of agents/firms in the market (*integer*, in paper = 2 or 3)
-*  k_memory: Memory length of the agent (*integer*, in paper = 1)
-*  discount_rate: Memory length of the agent (*integer*, in paper = 0.95)
-*  exploration_rate: Initial probability to take a random action for the epsilon-greedy exploration (*float* between zero and one)
-*  beta_decay: Decay parameter for the epsilon-greedy exploration (*float* close to zero)
-*  learning_rate: Weight that is given to new information in each round (*float* between zero and one)
-*  min_price: Minimal price that agents can set (*integer*, in paper = 0)
-*  max_price: Maximal price that agents can set (*integer*, in paper = 5)
-*  reservation_price": Reservation price of the consumers (*integer*, in paper = 4)
-*  m_consumer: Number of consumers in the market (*integer*, in paper = 60)
-*  step: Steps between each price in the set of possible prices (*integer*, in paper = 1)
-*  learning_iterations: Maximal number of learning iterations if convergence fails (*integer*, in paper = 1000000000)
-*  rounds_convergence: Number of rounds to determine if the agent converged (*integer*, in paper = 100000)
-*  Q_star_threshold: Threshold to check if the optimal Q-matrix converged (*float*, in paper = 1e-09)
-*  avg_price_rounds: Number of periods to calculate the average price after convergence (*integer*, in paper = 1000)
-
-If you run a Monte Carlo simulation over a parameter grid, you have to define an additional dictionary (PARAMETER_CASES)
-with the following keys:
-*  beta_max: Maximal beta decay (*float*, in paper = 2e-05)
-*  beta_min: Minimal beta decay (*float*, in paper = 1e-08)
-*  alpha_max: Maximal learning rate (*float*, in paper = 0.25)
-*  alpha_min: Minimal learning rate (*integer*, in paper = 0.025)
-*  grid_points: Number of grid points to consider (*integer*, in paper = 100) 
-*  path_differ: String that is attached to each file name (*string*)
-
-For the paper, I run 1,000 simulations with different random seeds for each grid point.
-The parallelization is done across jobs on the cluster using PBS. 
-The See here for an implementation: `PBS-scripts <https://github.com/ToFeWe/q-learning-simulation-code>`_.
+* Run flexible market simulations with q-learning agents
+* Compute different performance measures
+* Export the agents to use them in different market environments (e.g., lab experiments)
 
 Minimal working examples
 ------------------------
@@ -127,10 +106,41 @@ For running a one iteration in a small grid simulation:
       job_array_index=1,
   )    
 
-Features
---------
+Parameter specification
+-----------------------
 
-* TODO
+In the simulation certain (hyper-)parameters have to be defined in a dictionary.
+The following keys are necessary:
+
+*  n_agent: Number of agents/firms in the market (*integer*, in paper = 2 or 3)
+*  k_memory: Memory length of the agent (*integer*, in paper = 1)
+*  discount_rate: Memory length of the agent (*integer*, in paper = 0.95)
+*  exploration_rate: Initial probability to take a random action for the epsilon-greedy exploration (*float* between zero and one)
+*  beta_decay: Decay parameter for the epsilon-greedy exploration (*float* close to zero)
+*  learning_rate: Weight that is given to new information in each round (*float* between zero and one)
+*  min_price: Minimal price that agents can set (*integer*, in paper = 0)
+*  max_price: Maximal price that agents can set (*integer*, in paper = 5)
+*  reservation_price": Reservation price of the consumers (*integer*, in paper = 4)
+*  m_consumer: Number of consumers in the market (*integer*, in paper = 60)
+*  step: Steps between each price in the set of possible prices (*integer*, in paper = 1)
+*  learning_iterations: Maximal number of learning iterations if convergence fails (*integer*, in paper = 1000000000)
+*  rounds_convergence: Number of rounds to determine if the agent converged (*integer*, in paper = 100000)
+*  Q_star_threshold: Threshold to check if the optimal Q-matrix converged (*float*, in paper = 1e-09)
+*  avg_price_rounds: Number of periods to calculate the average price after convergence (*integer*, in paper = 1000)
+
+If you run a Monte Carlo simulation over a parameter grid, you have to define an additional dictionary (PARAMETER_CASES)
+with the following keys:
+
+*  beta_max: Maximal beta decay (*float*, in paper = 2e-05)
+*  beta_min: Minimal beta decay (*float*, in paper = 1e-08)
+*  alpha_max: Maximal learning rate (*float*, in paper = 0.25)
+*  alpha_min: Minimal learning rate (*integer*, in paper = 0.025)
+*  grid_points: Number of grid points to consider (*integer*, in paper = 100) 
+*  path_differ: String that is attached to each file name (*string*)
+
+For the paper, I run 1,000 simulations with different random seeds for each grid point.
+The parallelization is done across jobs on the cluster using PBS. 
+The See here for an implementation: `PBS-scripts <https://github.com/ToFeWe/q-learning-simulation-code>`_.
 
 Credits
 -------
