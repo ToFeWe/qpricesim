@@ -13,7 +13,7 @@ with open('HISTORY.rst') as history_file:
 # Requirements are so restrictive due to the cluster I am using 
 # TODO: Change this and then just use a requiremnts.txt in the 
 # simulation package.
-requirements = ['numpy==1.19.0', 'numba==0.51.1']
+requirements = ['numpy<=1.24.3', 'numba<=0.57.0']
 
 setup_requirements = ['pytest-runner', ]
 
