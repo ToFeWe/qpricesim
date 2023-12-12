@@ -9,6 +9,7 @@ import numpy as np
 from ..model_code.QLearningAgent import jitclass_to_baseclass
 from .agents_simulation import train_agents
 from .performance import get_performance_measures
+from .utils_simulation import gen_possible_price_combination
 
 
 def run_specific_specification(beta, alpha, base_parameter, random_seed):
@@ -33,6 +34,8 @@ def run_specific_specification(beta, alpha, base_parameter, random_seed):
               avg_profit (float): Average of the value of all states.
               prices_upon_convergence (float): Prices after convergence
               nash_equilibrium (boolean): True if the agents play jointly a Nash Equilibrium
+              all_best_actions (array): Best actions for each agent in each state
+              out_periods_shock (array): Shock to agent 1 in each period
               state (integer): Index representation of the state of convergence
               trained_agents (list): List of all QLearningAgents upon convergence
     """
@@ -63,6 +66,8 @@ def run_specific_specification(beta, alpha, base_parameter, random_seed):
     avg_profit = performance_measures[3]
     prices_upon_convergence = performance_measures[4]
     nash_equilibrium = performance_measures[5]
+    all_best_actions = performance_measures[6]
+    out_periods_shock = performance_measures[7]
 
     return (
         profitability_state,
@@ -71,6 +76,8 @@ def run_specific_specification(beta, alpha, base_parameter, random_seed):
         avg_profit,
         prices_upon_convergence,
         nash_equilibrium,
+        all_best_actions,
+        out_periods_shock,
         state,
         trained_agents,
     )
@@ -107,6 +114,8 @@ def run_single_simulation(base_parameter, cases, job_array_index):
                                        prices after convergence.
               nash_equilibrium_array (array): Results of the grid simulation for the
                                               Nash Equilibrium analysis.
+              all_best_actions_array (array): Best actions for each agent in each state
+              periods_shock_array (array): Shock to agent 1 and then prices
               super_star_tuple (tuple): Tuple with the best agent in this simulation run
                                         according to the weighted average profitability
 
@@ -146,6 +155,22 @@ def run_single_simulation(base_parameter, cases, job_array_index):
     nash_equilibrium_array = np.empty(
         (cases["grid_points"], cases["grid_points"]), dtype=bool
     )
+
+    # Best action array is ndarray of size grid_points x grid_points x agents x states
+    # We need to store the best action for each agent in each state for each alpha and beta
+    n_states = len(gen_possible_price_combination(base_parameter))
+    n_agents = base_parameter["n_agent"]
+    all_best_actions_array = np.empty((cases["grid_points"], cases["grid_points"],
+                                       n_agents, n_states), dtype=np.int8)
+    
+    # Shock array is ndarray of size grid_points x grid_points x periods x agents
+    # Note that this is the other way around than the best action array (TODO: Maybe change this)
+    # Furthermore, note that we only consider the shock to agent 1
+    n_sim_play_periods = base_parameter["n_play_periods"]
+    periods_shock_array = np.empty((cases["grid_points"], cases["grid_points"],
+                                           n_sim_play_periods, n_agents), dtype=np.int8)
+       
+
     # We search in each monte carlo simulation for the super star agent
     # This is done by looking for the agent with the highest average weighted
     # profitability
@@ -176,6 +201,8 @@ def run_single_simulation(base_parameter, cases, job_array_index):
                 avg_profit,
                 prices_upon_convergence,
                 nash_equilibrium,
+                all_best_actions,
+                out_periods_shock,
                 state,
                 trained_agents,
             ) = out
@@ -187,6 +214,8 @@ def run_single_simulation(base_parameter, cases, job_array_index):
             avg_profit_array[i_alpha, i_beta] = np.mean(avg_profit)
             avg_price_array[i_alpha, i_beta] = np.mean(prices_upon_convergence)
             nash_equilibrium_array[i_alpha, i_beta] = all(nash_equilibrium)
+            all_best_actions_array[i_alpha, i_beta, :, :] = all_best_actions
+            periods_shock_array[i_alpha, i_beta, :, :] = out_periods_shock
 
             # Check if the current agent is the current super star
             # Note that we take the mean of all agents to
@@ -216,6 +245,8 @@ def run_single_simulation(base_parameter, cases, job_array_index):
         avg_profit_array=avg_profit_array,
         avg_price_array=avg_price_array,
         nash_equilibrium_array=nash_equilibrium_array,
+        all_best_actions_array=all_best_actions_array,
+        periods_shock_array=periods_shock_array,
         super_star_tuple=out_super_star_tuple,
     )
 

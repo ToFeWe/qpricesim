@@ -19,7 +19,7 @@ from .utils_simulation import gen_possible_prices
 from .utils_simulation import gen_price_combination_byte_mappings
 from .utils_simulation import int_state_to_price_state
 from .utils_simulation import price_state_to_int_state
-
+from .utils_play_simulation import play_with_deviation
 
 def get_all_prices(
     all_agents,
@@ -321,10 +321,8 @@ def get_performance_measures(all_agents, parameter, convergence_state):
                out_prices_upon_convergence (array): Prices upon convergence
                out_nash_equilibrium (array): If the agent played a NE in the state
                                              of convergence.
-               q_matrices_tuple_list (tuple): Tuple where each element is again a
-                                              tuple with the q_matrix of the optimal
-                                              and the actual agent.
-                                              (optimal_agent_q_matrix, agent_q_matrix)
+               out_all_best_actions (array): Best response array for all agents.
+               out_periods_shock (array): Prices after a deviation from player 1
     """
     prices_to_int_dict, int_to_prices_dict = gen_price_combination_byte_mappings(
         parameter
@@ -336,9 +334,9 @@ def get_performance_measures(all_agents, parameter, convergence_state):
     # when deriving the optimaliy.
     all_positions = list(range(len(all_agents)))
 
-    # For each agent, we will have the actual q_matrix and the optimal q_matrix.
-    # Those will be saved to a list of tuples
-    q_matrices_tuple_list = []
+    # For each agent, we save the best response array
+    n_states = len(prices_to_int_dict.keys())
+    out_all_best_actions = np.empty([parameter["n_agent"], n_states], dtype=np.int8)
 
     # Define the output arrays
     out_profitability_state = np.empty(parameter["n_agent"])
@@ -375,9 +373,9 @@ def get_performance_measures(all_agents, parameter, convergence_state):
             price_set=price_set,
         )
 
-        # Extract the q-matrix from the actual agent and compute all outputs.
+        # Extract the best response array.
         agent_q_matrix = agent.get_qmatrix()
-        q_matrices_tuple_list.append((optimal_agent_q_matrix, agent_q_matrix))
+        out_all_best_actions[pos, :] = np.argmax(agent_q_matrix, axis=1)
 
         out_profitability_state[pos] = get_specific_profitability(
             actual_agent_q_matrix=agent_q_matrix, state=convergence_state
@@ -399,6 +397,7 @@ def get_performance_measures(all_agents, parameter, convergence_state):
             state=convergence_state,
         )
 
+    # Derive the prices upon convergence
     out_prices_upon_convergence = get_all_prices(
         all_agents=all_agents,
         parameter=parameter,
@@ -407,6 +406,15 @@ def get_performance_measures(all_agents, parameter, convergence_state):
         price_set=price_set,
         state_of_convergence=convergence_state,
     )
+
+    # Get prices after a deviation from player 1
+    # Note that the agent comes last here and not first as in the other arrays (TODO: change this)
+    price_state_convergence = int_state_to_price_state(
+        int_state=convergence_state, int_to_prices_dict=int_to_prices_dict
+    )
+    out_periods_shock = play_with_deviation(parameter=parameter, all_agents=all_agents, prices_to_int_dict=prices_to_int_dict,
+                                            possible_prices=price_set, initial_price_state=price_state_convergence)
+
     return (
         out_profitability_state,
         out_weighted_profitability,
@@ -414,5 +422,6 @@ def get_performance_measures(all_agents, parameter, convergence_state):
         out_avg_profit,
         out_prices_upon_convergence,
         out_nash_equilibrium,
-        q_matrices_tuple_list,
+        out_all_best_actions,
+        out_periods_shock
     )

@@ -89,7 +89,7 @@ def best_response_share(optimal_agent_q_matrix, actual_agent_q_matrix):
 
     Returns:
         float: Fraction of state in which the actual agent has played a
-               best reponse.
+               best response.
     """
     br_optimal_agent = np.argmax(optimal_agent_q_matrix, axis=1)
     br_actual_agent = np.argmax(actual_agent_q_matrix, axis=1)
@@ -134,3 +134,4 @@ def sort_list(list_to_sort, sort_by_list):
     sorted_list = [x for _, x in sorted(zipped_pairs)]
 
     return sorted_list
+
