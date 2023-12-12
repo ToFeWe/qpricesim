@@ -154,7 +154,7 @@ def _flatten_array_to_str(array):
     """
     s = ""
     for i in array:
-        s += str(i)
+        s += str(i) + "_"
     return s
 
 
