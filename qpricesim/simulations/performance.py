@@ -336,7 +336,7 @@ def get_performance_measures(all_agents, parameter, convergence_state):
 
     # For each agent, we save the best response array
     n_states = len(prices_to_int_dict.keys())
-    out_all_best_actions = np.empty([parameter["n_agent"], n_states], dtype=np.int8)
+    out_all_best_actions = np.empty([parameter["n_agent"], n_states], dtype=np.int64)
 
     # Define the output arrays
     out_profitability_state = np.empty(parameter["n_agent"])

@@ -161,14 +161,14 @@ def run_single_simulation(base_parameter, cases, job_array_index):
     n_states = len(gen_possible_price_combination(base_parameter))
     n_agents = base_parameter["n_agent"]
     all_best_actions_array = np.empty((cases["grid_points"], cases["grid_points"],
-                                       n_agents, n_states), dtype=np.int8)
+                                       n_agents, n_states), dtype=np.int64)
     
     # Shock array is ndarray of size grid_points x grid_points x periods x agents
     # Note that this is the other way around than the best action array (TODO: Maybe change this)
     # Furthermore, note that we only consider the shock to agent 1
     n_sim_play_periods = base_parameter["n_play_periods"]
     periods_shock_array = np.empty((cases["grid_points"], cases["grid_points"],
-                                           n_sim_play_periods, n_agents), dtype=np.int8)
+                                           n_sim_play_periods, n_agents), dtype=np.int64)
        
 
     # We search in each monte carlo simulation for the super star agent

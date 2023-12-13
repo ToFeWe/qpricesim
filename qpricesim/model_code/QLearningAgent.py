@@ -6,7 +6,7 @@ QLearningAgentBase.
 """
 import numpy as np
 from numba import float64
-from numba import int32
+from numba import int64
 from numba import njit
 from numba.experimental import jitclass
 
@@ -173,8 +173,8 @@ class QLearningAgentBase:
 
 
 spec = [
-    ("n_actions", int32),
-    ("n_states", int32),
+    ("n_actions", int64),
+    ("n_states", int64),
     ("_qvalues", float64[:, :]),
     ("alpha", float64),
     ("epsilon", float64),
