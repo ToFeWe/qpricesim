@@ -119,7 +119,8 @@ def test_gen_price_combination_byte_mappings_same_keys_values(parameter_setup):
 
         # Check if both have the same keys/values
         for prices_string in prices_to_int_dict.keys():
-            price_state = np.array([eval(i) for i in prices_string])
+            price_state_string_split = [item for item in prices_string.split("_") if item != '']
+            price_state = np.array([eval(i) for i in price_state_string_split])
             assert any(
                 [
                     np.array_equal(price_state, price_array)
@@ -154,7 +155,8 @@ def test_gen_price_combination_byte_mappings_mapping_and_back(parameter_setup):
             assert int_state_reversed == int_state
 
         for price_state_string in prices_to_int_dict.keys():
-            price_state = np.array([eval(i) for i in price_state_string])
+            price_state_string_split = [item for item in price_state_string.split("_") if item != '']
+            price_state = np.array([eval(i) for i in price_state_string_split])
             int_state_initial = prices_to_int_dict[price_state_string]
             price_state_reversed = int_to_prices_dict[int_state_initial]
 

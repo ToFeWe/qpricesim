@@ -24,6 +24,8 @@ def setup():
         "alpha": 0.1,
         "avg_price_rounds": 5,
         "epsilon": 0.05,
+        "n_play_periods": 30,
+        "periods_before_deviation": 10,
     }
     return parameter_1
 

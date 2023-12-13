@@ -19,7 +19,8 @@ from qpricesim.simulations.utils_performance import get_specific_profitability
 from qpricesim.simulations.utils_performance import get_weighted_profitability
 from qpricesim.simulations.utils_simulation import gen_possible_prices
 from qpricesim.simulations.utils_simulation import gen_price_combination_byte_mappings
-
+from qpricesim.simulations.utils_play_simulation import play_with_deviation
+from qpricesim.simulations.utils_simulation import int_state_to_price_state
 
 @pytest.fixture
 def setup():
@@ -42,6 +43,8 @@ def setup():
         "alpha": 0.1,
         "avg_price_rounds": 5,
         "epsilon": 0.1,
+        "n_play_periods": 30,
+        "periods_before_deviation": 10
     }
 
     agent_1 = QLearningAgent(
@@ -216,6 +219,14 @@ def test_integration_performance_measures(setup):
         price_set,
         1,
     )
+    price_state = int_state_to_price_state(int_state=1,
+                                           int_to_prices_dict=int_to_prices_dict)
+    prices_with_shock = play_with_deviation(parameter=parameter,
+                                            all_agents=all_agents,
+                                            prices_to_int_dict=prices_to_int_dict,
+                                            possible_prices=price_set,
+                                            initial_price_state=price_state)
+    
 
     for pos, agent in enumerate(all_agents):
         all_competitors = list(all_agents)
@@ -249,9 +260,14 @@ def test_integration_performance_measures(setup):
         specific_prof_expected = get_specific_profitability(agent._qvalues, 1)
         wp_expected = get_weighted_profitability(optimal_agent_q_matrix, agent._qvalues)
         avg_profit = get_average_profitability(agent._qvalues)
+        best_actions = np.argmax(agent._qvalues, axis=1)
+
         assert out_state_1[0][pos] == specific_prof_expected
         assert out_state_1[1][pos] == wp_expected
         assert out_state_1[2][pos] == br_expected
         assert out_state_1[3][pos] == avg_profit
         assert out_state_1[5][pos] == ne_expected
+        assert_array_almost_equal(out_state_1[6][pos, :], best_actions)
+
     assert_array_almost_equal(out_state_1[4], expected_prices_state_1)
+    assert_array_almost_equal(out_state_1[7], prices_with_shock)
