@@ -324,6 +324,9 @@ def init_agents(parameter):
     price_array = gen_possible_prices(parameter)
     prices_to_int_dict, _ = gen_price_combination_byte_mappings(parameter=parameter)
 
+    # Check if we use the human Q-matrix
+    bool_human_q = parameter.get("use_human_Q_matrix", False)
+    
     for _ in range(n_agent):
         current_agent = QLearningAgent(
             alpha=parameter["learning_rate"],
@@ -331,6 +334,7 @@ def init_agents(parameter):
             discount=parameter["discount_rate"],
             n_actions=price_array.shape[0],
             n_states=len(prices_to_int_dict.keys()),
+            use_human_q_matrix=bool_human_q,
         )
         agent_list.append(current_agent)
 
